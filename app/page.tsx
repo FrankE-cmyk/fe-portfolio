@@ -1,5 +1,6 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, type CSSProperties } from "react";
+
 const projectImages = {
   npsa: "/images/trustedresearch.png",
   telecare: "/images/telecare.gif",
@@ -9,9 +10,64 @@ const projectImages = {
   khog: "/images/khoghewad.gif",
 };
 
+type ImageKey = keyof typeof projectImages;
 
+type ImageGallery = {
+  grid: string[];
+  featured?: string;
+  gridEnd?: string;
+};
 
-const projects = [
+type ProjectDetail = {
+  client: string;
+  paragraphs: string[];
+  tagline?: string;
+  taglineAfterVideo?: boolean;
+  channels?: string;
+  images?: string[];
+  imageGallery?: ImageGallery;
+  youtubeId?: string;
+  youtubeAutoplay?: boolean;
+  youtubeMute?: boolean;
+  youtubeIds?: string[];
+  paragraphsAfter?: string[];
+};
+
+type Project = {
+  id: number;
+  title: string;
+  imageKey: ImageKey;
+  client: string;
+  logoText: string;
+  bg: string;
+  accent: string;
+  textColor: string;
+  hasVideo: boolean;
+  detail?: ProjectDetail;
+};
+
+type GridPlacement = {
+  column: string;
+  row: string;
+};
+
+type PageShellProps = {
+  onBack: () => void;
+  isMobile: boolean;
+};
+
+type ProjectTileProps = {
+  project: Project;
+  placement: GridPlacement | null;
+  onClick: (project: Project) => void;
+  isMobile: boolean;
+};
+
+type ProjectPageProps = PageShellProps & {
+  project: Project;
+};
+
+const projects: Project[] = [
   {
     id: 1,
     title: "Trusted Research",
@@ -171,7 +227,7 @@ const projects = [
 ];
 
 // 6 tiles: 2 rows of 3, top row taller than bottom
-const gridPlacements = [
+const gridPlacements: GridPlacement[] = [
   { column: "1 / span 1", row: "1 / span 1" },
   { column: "2 / span 1", row: "1 / span 1" },
   { column: "3 / span 1", row: "1 / span 1" },
@@ -180,10 +236,10 @@ const gridPlacements = [
   { column: "3 / span 1", row: "2 / span 1" },
 ];
 
-function ProjectTile({ project, placement, onClick, isMobile }) {
+function ProjectTile({ project, placement, onClick, isMobile }: ProjectTileProps) {
   const [hovered, setHovered] = useState(false);
 
-  const tileStyle = isMobile
+  const tileStyle: CSSProperties = isMobile
     ? {
         width: "100%",
         aspectRatio: "1 / 1",
@@ -194,8 +250,8 @@ function ProjectTile({ project, placement, onClick, isMobile }) {
         flexShrink: 0,
       }
     : {
-        gridColumn: placement.column,
-        gridRow: placement.row,
+        gridColumn: placement!.column,
+        gridRow: placement!.row,
         position: "relative",
         overflow: "hidden",
         cursor: "pointer",
@@ -332,7 +388,7 @@ function ProjectTile({ project, placement, onClick, isMobile }) {
   );
 }
 
-function AboutPage({ onBack, isMobile }) {
+function AboutPage({ onBack, isMobile }: PageShellProps) {
   return (
     <div
       style={{
@@ -409,7 +465,10 @@ function AboutPage({ onBack, isMobile }) {
   );
 }
 
-function getYoutubeEmbedSrc(id, { autoplay = false, mute = false } = {}) {
+function getYoutubeEmbedSrc(
+  id: string,
+  { autoplay = false, mute = false }: { autoplay?: boolean; mute?: boolean } = {}
+) {
   const params = new URLSearchParams();
   if (autoplay) params.set("autoplay", "1");
   if (mute) params.set("mute", "1");
@@ -417,7 +476,7 @@ function getYoutubeEmbedSrc(id, { autoplay = false, mute = false } = {}) {
   return `https://www.youtube.com/embed/${id}${query ? `?${query}` : ""}`;
 }
 
-function ProjectPage({ project, onBack, isMobile }) {
+function ProjectPage({ project, onBack, isMobile }: ProjectPageProps) {
   return (
     <div
       style={{
@@ -569,7 +628,7 @@ function ProjectPage({ project, onBack, isMobile }) {
               </div>
             )}
 
-            {project.detail.youtubeIds?.length > 0 && (
+            {(project.detail.youtubeIds?.length ?? 0) > 0 && (
               <div
                 style={{
                   marginTop: "48px",
@@ -578,7 +637,7 @@ function ProjectPage({ project, onBack, isMobile }) {
                   gap: "16px",
                 }}
               >
-                {project.detail.youtubeIds.map((id, index) => (
+                {(project.detail.youtubeIds ?? []).map((id, index) => (
                   <div
                     key={id}
                     style={{
@@ -766,7 +825,7 @@ function ProjectPage({ project, onBack, isMobile }) {
               </div>
             )}
 
-            {project.detail.images?.length > 0 && (
+            {(project.detail.images?.length ?? 0) > 0 && (
               <div
                 style={{
                   marginTop: "48px",
@@ -775,7 +834,7 @@ function ProjectPage({ project, onBack, isMobile }) {
                   gap: "24px",
                 }}
               >
-                {project.detail.images.map((src, index) => (
+                {(project.detail.images ?? []).map((src, index) => (
                   <img
                     key={src}
                     src={src}
@@ -848,7 +907,7 @@ function ProjectPage({ project, onBack, isMobile }) {
 }
 
 export default function Portfolio() {
-  const [activeProject, setActiveProject] = useState(null);
+  const [activeProject, setActiveProject] = useState<Project | null>(null);
   const [showAbout, setShowAbout] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
