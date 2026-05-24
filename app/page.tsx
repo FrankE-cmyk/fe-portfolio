@@ -6,7 +6,7 @@ const projectImages = {
   telecare: "/images/telecare.gif",
   taxfacts: "/images/taxfacts.gif",
   hidden: "/images/hiddenthreads.gif",
-  khog: "/images/khog-gif.gif",
+  khog: "/images/khoghewad.gif",
   badapple: "/images/badapple.jpg",
 };
 
