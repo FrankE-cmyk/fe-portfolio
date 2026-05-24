@@ -2,12 +2,12 @@
 import { useState, useEffect, type CSSProperties } from "react";
 
 const projectImages = {
-  npsa: "/images/trustedresearch.png",
+  npsa: "/images/trustedresearch.jpg",
   telecare: "/images/telecare.gif",
   taxfacts: "/images/taxfacts.gif",
-  badapple: "/images/badapple.jpg",
   hidden: "/images/hiddenthreads.gif",
-  khog: "/images/khoghewad.gif",
+  khog: "/images/khog-gif.gif",
+  badapple: "/images/badapple.jpg",
 };
 
 type ImageKey = keyof typeof projectImages;
