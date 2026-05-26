@@ -28,8 +28,8 @@ type ProjectDetail = {
   imageGallery?: ImageGallery;
   youtubeId?: string;
   youtubeAutoplay?: boolean;
-  youtubeMute?: boolean;
   youtubeIds?: string[];
+  youtubeWatchUrl?: string;
   paragraphsAfter?: string[];
 };
 
@@ -114,7 +114,7 @@ const projects: Project[] = [
       ],
       youtubeId: "7Qklcdq7PQo",
       youtubeAutoplay: true,
-      youtubeMute: true,
+      youtubeWatchUrl: "https://www.youtube.com/watch?v=7Qklcdq7PQo",
       paragraphsAfter: ["The results exceeded every benchmark:"],
       tagline:
         "Awareness of the switchover's impact on telecare devices rose +28% among landline dependents – awareness of the required action rose +18% among the same group – 77% of campaign recognisers had taken or planned action within 12 months, vs 65% of non-recognisers",
@@ -143,6 +143,7 @@ const projects: Project[] = [
         "9QOwR9wxR9M",
         "BUPsosKVT8k",
       ],
+      youtubeWatchUrl: "https://www.youtube.com/watch?v=cFNy829Xbfs",
     },
   },
   {
@@ -222,6 +223,8 @@ const projects: Project[] = [
       tagline:
         "The hidden thread: space technology is a force that stays invisible, weaving through our daily lives, keeping everything in time. Fragile but essential.",
       youtubeId: "jVP1cNJQydk",
+      youtubeAutoplay: true,
+      youtubeWatchUrl: "https://www.youtube.com/watch?v=jVP1cNJQydk",
     },
   },
 ];
@@ -465,15 +468,47 @@ function AboutPage({ onBack, isMobile }: PageShellProps) {
   );
 }
 
-function getYoutubeEmbedSrc(
-  id: string,
-  { autoplay = false, mute = false }: { autoplay?: boolean; mute?: boolean } = {}
-) {
-  const params = new URLSearchParams();
-  if (autoplay) params.set("autoplay", "1");
-  if (mute) params.set("mute", "1");
-  const query = params.toString();
-  return `https://www.youtube.com/embed/${id}${query ? `?${query}` : ""}`;
+function getYoutubeEmbedSrc(id: string, autoplay = false) {
+  const base = `https://www.youtube-nocookie.com/embed/${id}`;
+  if (!autoplay) return base;
+  return `${base}?autoplay=1&mute=1&playsinline=1`;
+}
+
+function YoutubeFallback({
+  href,
+  textColor,
+  accent,
+}: {
+  href: string;
+  textColor: string;
+  accent: string;
+}) {
+  return (
+    <p
+      style={{
+        marginTop: "12px",
+        fontFamily: "sans-serif",
+        fontSize: "11px",
+        letterSpacing: "0.02em",
+        color: textColor,
+        opacity: 0.4,
+      }}
+    >
+      Video not playing?{" "}
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          color: accent,
+          textDecoration: "underline",
+          textUnderlineOffset: "2px",
+        }}
+      >
+        Watch on YouTube
+      </a>
+    </p>
+  );
 }
 
 function ProjectPage({ project, onBack, isMobile }: ProjectPageProps) {
@@ -601,83 +636,101 @@ function ProjectPage({ project, onBack, isMobile }: ProjectPageProps) {
             )}
 
             {project.detail.youtubeId && (
-              <div
-                style={{
-                  marginTop: "48px",
-                  position: "relative",
-                  width: "100%",
-                  paddingBottom: "56.25%",
-                  height: 0,
-                  borderRadius: "8px",
-                  overflow: "hidden",
-                }}
-              >
-                <iframe
-                  src={getYoutubeEmbedSrc(project.detail.youtubeId, {
-                    autoplay: project.detail.youtubeAutoplay,
-                    mute: project.detail.youtubeMute,
-                  })}
-                  title={`${project.title} video`}
-                  loading="lazy"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  referrerPolicy="strict-origin-when-cross-origin"
-                  sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
+              <>
+                <div
                   style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
+                    marginTop: "48px",
+                    position: "relative",
                     width: "100%",
-                    height: "100%",
-                    border: 0,
-                    display: "block",
+                    paddingBottom: "56.25%",
+                    height: 0,
+                    borderRadius: "8px",
+                    overflow: "hidden",
                   }}
-                />
-              </div>
+                >
+                  <iframe
+                    src={getYoutubeEmbedSrc(
+                      project.detail.youtubeId,
+                      project.detail.youtubeAutoplay
+                    )}
+                    title={`${project.title} video`}
+                    loading="lazy"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      height: "100%",
+                      border: 0,
+                      display: "block",
+                    }}
+                  />
+                </div>
+                {project.detail.youtubeWatchUrl && (
+                  <YoutubeFallback
+                    href={project.detail.youtubeWatchUrl}
+                    textColor={project.textColor}
+                    accent={project.accent}
+                  />
+                )}
+              </>
             )}
 
             {(project.detail.youtubeIds?.length ?? 0) > 0 && (
-              <div
-                style={{
-                  marginTop: "48px",
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "16px",
-                }}
-              >
-                {(project.detail.youtubeIds ?? []).map((id, index) => (
-                  <div
-                    key={id}
-                    style={{
-                      position: "relative",
-                      width: "100%",
-                      paddingBottom: "56.25%",
-                      height: 0,
-                      borderRadius: "8px",
-                      overflow: "hidden",
-                    }}
-                  >
-                    <iframe
-                      src={`https://www.youtube.com/embed/${id}`}
-                      title={`${project.title} — video ${index + 1}`}
-                      loading="lazy"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      referrerPolicy="strict-origin-when-cross-origin"
-                      sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
+              <>
+                <div
+                  style={{
+                    marginTop: "48px",
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: "16px",
+                  }}
+                >
+                  {(project.detail.youtubeIds ?? []).map((id, index) => (
+                    <div
+                      key={id}
                       style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
+                        position: "relative",
                         width: "100%",
-                        height: "100%",
-                        border: 0,
-                        display: "block",
+                        paddingBottom: "56.25%",
+                        height: 0,
+                        borderRadius: "8px",
+                        overflow: "hidden",
                       }}
-                    />
-                  </div>
-                ))}
-              </div>
+                    >
+                      <iframe
+                        src={getYoutubeEmbedSrc(id, index === 0)}
+                        title={`${project.title} — video ${index + 1}`}
+                        loading="lazy"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        referrerPolicy="strict-origin-when-cross-origin"
+                        sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "100%",
+                          height: "100%",
+                          border: 0,
+                          display: "block",
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+                {project.detail.youtubeWatchUrl && (
+                  <YoutubeFallback
+                    href={project.detail.youtubeWatchUrl}
+                    textColor={project.textColor}
+                    accent={project.accent}
+                  />
+                )}
+              </>
             )}
 
             {project.detail.paragraphsAfter?.map((paragraph) => (
