@@ -621,6 +621,8 @@ function ProjectPage({ project, onBack, isMobile }: ProjectPageProps) {
                   loading="lazy"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
                   style={{
                     position: "absolute",
                     top: 0,
@@ -661,6 +663,8 @@ function ProjectPage({ project, onBack, isMobile }: ProjectPageProps) {
                       loading="lazy"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
+                      referrerPolicy="strict-origin-when-cross-origin"
+                      sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
                       style={{
                         position: "absolute",
                         top: 0,
