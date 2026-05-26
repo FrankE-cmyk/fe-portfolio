@@ -604,8 +604,10 @@ function ProjectPage({ project, onBack, isMobile }: ProjectPageProps) {
               <div
                 style={{
                   marginTop: "48px",
+                  position: "relative",
                   width: "100%",
-                  aspectRatio: "16 / 9",
+                  paddingBottom: "56.25%",
+                  height: 0,
                   borderRadius: "8px",
                   overflow: "hidden",
                 }}
@@ -616,9 +618,13 @@ function ProjectPage({ project, onBack, isMobile }: ProjectPageProps) {
                     mute: project.detail.youtubeMute,
                   })}
                   title={`${project.title} video`}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  loading="lazy"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                   style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
                     width: "100%",
                     height: "100%",
                     border: 0,
@@ -643,7 +649,8 @@ function ProjectPage({ project, onBack, isMobile }: ProjectPageProps) {
                     style={{
                       position: "relative",
                       width: "100%",
-                      aspectRatio: "16 / 9",
+                      paddingBottom: "56.25%",
+                      height: 0,
                       borderRadius: "8px",
                       overflow: "hidden",
                     }}
@@ -651,11 +658,13 @@ function ProjectPage({ project, onBack, isMobile }: ProjectPageProps) {
                     <iframe
                       src={`https://www.youtube.com/embed/${id}`}
                       title={`${project.title} — video ${index + 1}`}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      loading="lazy"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
                       style={{
                         position: "absolute",
-                        inset: 0,
+                        top: 0,
+                        left: 0,
                         width: "100%",
                         height: "100%",
                         border: 0,
